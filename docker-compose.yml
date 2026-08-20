@@ -1,0 +1,58 @@
+services:
+  stock-db:
+    image: postgres:17-alpine
+    container_name: korp-stock-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${STOCK_DB_USER}
+      POSTGRES_PASSWORD: ${STOCK_DB_PASSWORD}
+      POSTGRES_DB: ${STOCK_DB_NAME}
+
+    ports:
+      - "${STOCK_DB_PORT}:5432"
+
+    volumes:
+      - stock-db-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${STOCK_DB_USER} -d ${STOCK_DB_NAME}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  billing-db:
+    image: postgres:17-alpine
+    container_name: korp-billing-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: ${BILLING_DB_USER}
+      POSTGRES_PASSWORD: ${BILLING_DB_PASSWORD}
+      POSTGRES_DB: ${BILLING_DB_NAME}
+
+    ports:
+      - "${BILLING_DB_PORT}:5432"
+
+    volumes:
+      - billing-db-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${BILLING_DB_USER} -d ${BILLING_DB_NAME}"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  stock-db-data:
+  billing-db-data:

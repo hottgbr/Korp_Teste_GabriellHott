@@ -1,3 +1,3 @@
-module github.com/gabriellhott/Korp_Teste_GabriellHott/services/stock-service
+module github.com/hottgbr/Korp_Teste_GabriellHott/services/stock-service
 
 go 1.26.6
