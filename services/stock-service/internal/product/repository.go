@@ -6,10 +6,14 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var ErrProductNotFound = errors.New("product not found")
+var (
+	ErrProductNotFound   = errors.New("product not found")
+	ErrProductCodeExists = errors.New("product code already exists")
+)
 
 type Repository struct {
 	db *pgxpool.Pool
@@ -47,9 +51,14 @@ func (r *Repository) Create(
 	)
 
 	if err != nil {
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return nil, ErrProductCodeExists
+		}
+
 		return nil, fmt.Errorf("failed to create product: %w", err)
 	}
-
 	return &product, nil
 }
 

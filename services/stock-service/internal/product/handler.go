@@ -38,7 +38,10 @@ func (h *Handler) Create(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
-
+		case errors.Is(err, ErrProductCodeExists):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": err.Error(),
+			})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": "failed to create product",
