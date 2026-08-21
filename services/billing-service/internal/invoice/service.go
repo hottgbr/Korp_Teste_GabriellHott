@@ -24,6 +24,9 @@ var (
 	ErrStockUpdateFailed = errors.New(
 		"failed to update product stock",
 	)
+	ErrInvoiceNotFound = errors.New(
+		"invoice not found",
+	)
 )
 
 type Service struct {

@@ -101,12 +101,24 @@ func (h *Handler) FindByID(c *gin.Context) {
 	)
 
 	if err != nil {
-		c.JSON(
-			http.StatusInternalServerError,
-			gin.H{
-				"error": "failed to retrieve invoice",
-			},
-		)
+		switch {
+		case errors.Is(err, ErrInvoiceNotFound):
+			c.JSON(
+				http.StatusNotFound,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+		default:
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{
+					"error": "failed to retrieve invoice",
+				},
+			)
+		}
+
 		return
 	}
 

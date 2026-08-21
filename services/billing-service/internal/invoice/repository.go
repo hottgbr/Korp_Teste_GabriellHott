@@ -2,8 +2,10 @@ package invoice
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -169,6 +171,10 @@ func (r *Repository) FindByID(
 		&invoice.UpdatedAt,
 	)
 
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, ErrInvoiceNotFound
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf(
 			"failed to find invoice: %w",
@@ -226,6 +232,7 @@ func (r *Repository) FindByID(
 
 	return &invoice, nil
 }
+
 func (r *Repository) Close(
 	ctx context.Context,
 	id int64,
