@@ -8,7 +8,9 @@ import { FeedbackMessage } from '../../components/feedback-message/feedback-mess
 import { StatusBadge } from '../../components/status-badge/status-badge';
 import { InvoiceStatus } from '../../enums/invoice-status';
 import { Invoice } from '../../models/invoice';
+import { Product } from '../../models/product';
 import { InvoiceService } from '../../services/invoice.service';
+import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-invoice-details',
@@ -24,19 +26,23 @@ import { InvoiceService } from '../../services/invoice.service';
 export class InvoiceDetails implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly invoiceService = inject(InvoiceService);
+  private readonly productService = inject(ProductService);
 
   readonly invoiceStatus = InvoiceStatus;
 
   invoice = signal<Invoice | null>(null);
+  productsById = signal<Record<number, Product>>({});
 
   isLoading = signal(false);
   isClosing = signal(false);
 
   errorMessage = signal('');
   successMessage = signal('');
+  productReferenceMessage = signal('');
 
   ngOnInit(): void {
     this.loadInvoice();
+    this.loadProductReferences();
   }
 
   private loadInvoice(): void {
@@ -80,6 +86,34 @@ export class InvoiceDetails implements OnInit {
           );
         },
       });
+  }
+
+  private loadProductReferences(): void {
+    this.productService
+      .list()
+      .subscribe({
+        next: (products: Product[]) => {
+          const lookup = products.reduce<Record<number, Product>>(
+            (result, product) => {
+              result[product.id] = product;
+              return result;
+            },
+            {},
+          );
+
+          this.productsById.set(lookup);
+        },
+
+        error: () => {
+          this.productReferenceMessage.set(
+            'Não foi possível carregar os detalhes dos produtos. Os identificadores serão exibidos no lugar.',
+          );
+        },
+      });
+  }
+
+  getProduct(productId: number): Product | undefined {
+    return this.productsById()[productId];
   }
 
   closeInvoice(): void {

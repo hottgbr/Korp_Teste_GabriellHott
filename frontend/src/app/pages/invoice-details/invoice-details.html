@@ -34,6 +34,11 @@
       [message]="errorMessage()"
       type="error"
     />
+
+    <app-feedback-message
+      [message]="productReferenceMessage()"
+      type="info"
+    />
   </div>
 
   @if (invoice(); as currentInvoice) {
@@ -148,14 +153,27 @@
                     <tr>
                       <td>
                         <div class="product-cell">
-                          <strong>
-                            Produto {{ item.productId }}
-                          </strong>
+                          @if (
+                            getProduct(item.productId);
+                            as product
+                          ) {
+                            <strong>
+                              {{ product.description }}
+                            </strong>
 
-                          <span>
-                            ID do produto:
-                            {{ item.productId }}
-                          </span>
+                            <span>
+                              Código:
+                              {{ product.code }}
+                            </span>
+                          } @else {
+                            <strong>
+                              Produto #{{ item.productId }}
+                            </strong>
+
+                            <span>
+                              Dados do produto indisponíveis
+                            </span>
+                          }
                         </div>
                       </td>
 
