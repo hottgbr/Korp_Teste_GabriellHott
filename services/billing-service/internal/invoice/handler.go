@@ -3,9 +3,9 @@ package invoice
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"strconv"
 )
 
 type Handler struct {
@@ -60,6 +60,7 @@ func (h *Handler) Create(c *gin.Context) {
 		createdInvoice,
 	)
 }
+
 func (h *Handler) List(c *gin.Context) {
 	invoices, err := h.service.List(
 		c.Request.Context(),
@@ -151,6 +152,17 @@ func (h *Handler) Close(c *gin.Context) {
 		switch {
 		case errors.Is(
 			err,
+			ErrInvoiceNotFound,
+		):
+			c.JSON(
+				http.StatusNotFound,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+		case errors.Is(
+			err,
 			ErrInvoiceAlreadyClosed,
 		):
 			c.JSON(
@@ -162,12 +174,45 @@ func (h *Handler) Close(c *gin.Context) {
 
 		case errors.Is(
 			err,
-			ErrStockUpdateFailed,
+			ErrStockProductNotFound,
+		):
+			c.JSON(
+				http.StatusNotFound,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+		case errors.Is(
+			err,
+			ErrInsufficientStock,
+		):
+			c.JSON(
+				http.StatusConflict,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+		case errors.Is(
+			err,
+			ErrStockServiceUnavailable,
 		):
 			c.JSON(
 				http.StatusServiceUnavailable,
 				gin.H{
-					"error": "stock service unavailable or stock update failed",
+					"error": err.Error(),
+				},
+			)
+
+		case errors.Is(
+			err,
+			ErrStockUpdateFailed,
+		):
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{
+					"error": "failed to update product stock",
 				},
 			)
 

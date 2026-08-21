@@ -89,18 +89,34 @@ func (c *Client) DecreaseStockBatch(
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf(
-			"stock service unavailable: %w",
+			"%w: %v",
+			invoice.ErrStockServiceUnavailable,
 			err,
 		)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	switch resp.StatusCode {
+	case http.StatusOK:
+		return nil
+
+	case http.StatusNotFound:
+		return invoice.ErrStockProductNotFound
+
+	case http.StatusConflict:
+		return invoice.ErrInsufficientStock
+
+	case http.StatusInternalServerError,
+		http.StatusBadGateway,
+		http.StatusServiceUnavailable,
+		http.StatusGatewayTimeout:
+
+		return invoice.ErrStockServiceUnavailable
+
+	default:
 		return fmt.Errorf(
-			"stock service returned status %d",
+			"unexpected stock service status: %d",
 			resp.StatusCode,
 		)
 	}
-
-	return nil
 }

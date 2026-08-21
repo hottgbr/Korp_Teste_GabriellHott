@@ -27,6 +27,17 @@ var (
 	ErrInvoiceNotFound = errors.New(
 		"invoice not found",
 	)
+	ErrStockProductNotFound = errors.New(
+		"product not found in stock service",
+	)
+
+	ErrInsufficientStock = errors.New(
+		"insufficient product stock",
+	)
+
+	ErrStockServiceUnavailable = errors.New(
+		"stock service unavailable",
+	)
 )
 
 type Service struct {
@@ -114,11 +125,20 @@ func (s *Service) Close(
 		ctx,
 		stockItems,
 	); err != nil {
-		return nil, fmt.Errorf(
-			"%w: %v",
-			ErrStockUpdateFailed,
-			err,
-		)
+		switch {
+		case errors.Is(err, ErrStockProductNotFound),
+			errors.Is(err, ErrInsufficientStock),
+			errors.Is(err, ErrStockServiceUnavailable):
+
+			return nil, err
+
+		default:
+			return nil, fmt.Errorf(
+				"%w: %v",
+				ErrStockUpdateFailed,
+				err,
+			)
+		}
 	}
 
 	closedInvoice, err := s.repository.Close(
