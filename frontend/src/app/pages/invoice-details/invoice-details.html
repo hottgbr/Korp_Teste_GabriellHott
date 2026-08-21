@@ -1,5 +1,5 @@
 <section class="invoice-details-page">
-  <div class="page-toolbar">
+  <div class="page-toolbar no-print">
     <a
       class="back-link"
       routerLink="/invoices"
@@ -10,7 +10,7 @@
   </div>
 
   @if (isLoading()) {
-    <div class="state-card">
+    <div class="state-card no-print">
       <div class="loading-spinner"></div>
 
       <div>
@@ -24,15 +24,17 @@
     </div>
   }
 
-  <app-feedback-message
-    [message]="successMessage()"
-    type="success"
-  />
+  <div class="no-print">
+    <app-feedback-message
+      [message]="successMessage()"
+      type="success"
+    />
 
-  <app-feedback-message
-    [message]="errorMessage()"
-    type="error"
-  />
+    <app-feedback-message
+      [message]="errorMessage()"
+      type="error"
+    />
+  </div>
 
   @if (invoice(); as currentInvoice) {
     <header class="invoice-header">
@@ -51,7 +53,7 @@
           />
         </div>
 
-        <p>
+        <p class="no-print">
           Consulte os dados da nota e realize
           o fechamento para efetivar a baixa
           dos produtos em estoque.
@@ -175,7 +177,7 @@
         </section>
       </main>
 
-      <aside class="invoice-actions">
+      <aside class="invoice-actions no-print">
         <div class="action-card">
           <span class="section-label">
             Processamento
@@ -194,7 +196,7 @@
             </p>
 
             <button
-              class="primary-action"
+              class="primary-button invoice-action-button"
               type="button"
               [disabled]="isClosing()"
               (click)="closeInvoice()"
@@ -232,6 +234,14 @@
                 </p>
               </div>
             </div>
+
+            <button
+              class="secondary-button invoice-action-button"
+              type="button"
+              (click)="printInvoice()"
+            >
+              Imprimir novamente
+            </button>
           }
         </div>
       </aside>

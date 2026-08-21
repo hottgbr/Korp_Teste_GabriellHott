@@ -110,6 +110,10 @@ export class InvoiceDetails implements OnInit {
           this.successMessage.set(
             'Nota fiscal fechada com sucesso. O estoque foi atualizado.',
           );
+
+          setTimeout(() => {
+            this.printInvoice();
+          });
         },
 
         error: (error: HttpErrorResponse) => {
@@ -139,5 +143,9 @@ export class InvoiceDetails implements OnInit {
           }
         },
       });
+  }
+
+  printInvoice(): void {
+    window.print();
   }
 }

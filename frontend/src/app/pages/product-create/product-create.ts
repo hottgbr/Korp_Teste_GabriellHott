@@ -1,15 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-
+import { FeedbackMessage } from '../../components/feedback-message/feedback-message';
 import { ProductService } from '../../services/product.service';
 
 @Component({
   selector: 'app-product-create',
-  imports: [ ReactiveFormsModule, RouterLink, ],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    FeedbackMessage,
+  ],
   templateUrl: './product-create.html',
   styleUrl: './product-create.css',
 })

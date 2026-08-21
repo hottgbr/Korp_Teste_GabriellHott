@@ -1,98 +1,168 @@
-<section>
-  <header>
-    <div>
-      <h1>Novo produto</h1>
-      <p>Cadastre um novo produto no estoque.</p>
-    </div>
-
-    <a routerLink="/products">
-      Voltar
+<section class="product-create">
+  <div class="product-create__back">
+    <a
+      class="back-link"
+      routerLink="/products"
+    >
+      <span aria-hidden="true">←</span>
+      Voltar para produtos
     </a>
+  </div>
+
+  <header class="page-header">
+    <div>
+      <span class="page-header__eyebrow">
+        Estoque
+      </span>
+
+      <h1>Novo produto</h1>
+
+      <p>
+        Cadastre um produto para disponibilizá-lo
+        no estoque e utilizá-lo na emissão de notas fiscais.
+      </p>
+    </div>
   </header>
 
+  <app-feedback-message
+    [message]="errorMessage()"
+    type="error"
+  />
+
   <form
+    class="product-form"
     [formGroup]="form"
     (ngSubmit)="submit()"
   >
-    <div>
-      <label for="code">
-        Código
-      </label>
+    <div class="product-form__header">
+      <div>
+        <h2>Informações do produto</h2>
 
-      <input
-        id="code"
-        type="text"
-        formControlName="code"
-      />
-
-      @if (
-        form.controls.code.touched &&
-        form.controls.code.hasError('required')
-      ) {
-        <span>
-          O código é obrigatório.
-        </span>
-      }
+        <p>
+          Preencha os dados necessários para cadastrar
+          o produto no estoque.
+        </p>
+      </div>
     </div>
 
-    <div>
-      <label for="description">
-        Descrição
-      </label>
+    <div class="product-form__body">
+      <div class="form-field">
+        <label for="code">
+          Código
+        </label>
 
-      <input
-        id="description"
-        type="text"
-        formControlName="description"
-      />
+        <input
+          id="code"
+          type="text"
+          formControlName="code"
+          placeholder="Ex.: PROD-001"
+          autocomplete="off"
+        />
 
-      @if (
-        form.controls.description.touched &&
-        form.controls.description.hasError('required')
-      ) {
-        <span>
-          A descrição é obrigatória.
+        <span class="form-field__hint">
+          Identificador único utilizado para localizar
+          o produto.
         </span>
-      }
+
+        @if (
+          form.controls.code.touched &&
+          form.controls.code.hasError('required')
+        ) {
+          <span class="form-field__error">
+            O código é obrigatório.
+          </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="description">
+          Descrição
+        </label>
+
+        <input
+          id="description"
+          type="text"
+          formControlName="description"
+          placeholder="Ex.: Teclado mecânico"
+          autocomplete="off"
+        />
+
+        <span class="form-field__hint">
+          Informe um nome claro para identificação
+          do produto.
+        </span>
+
+        @if (
+          form.controls.description.touched &&
+          form.controls.description.hasError('required')
+        ) {
+          <span class="form-field__error">
+            A descrição é obrigatória.
+          </span>
+        }
+      </div>
+
+      <div class="form-field form-field--stock">
+        <label for="stock">
+          Saldo inicial
+        </label>
+
+        <input
+          id="stock"
+          type="number"
+          formControlName="stock"
+          min="0"
+        />
+
+        <span class="form-field__hint">
+          Quantidade disponível no estoque no momento
+          do cadastro.
+        </span>
+
+        @if (
+          form.controls.stock.touched &&
+          form.controls.stock.hasError('required')
+        ) {
+          <span class="form-field__error">
+            O saldo é obrigatório.
+          </span>
+        }
+
+        @if (
+          form.controls.stock.touched &&
+          form.controls.stock.hasError('min')
+        ) {
+          <span class="form-field__error">
+            O saldo não pode ser negativo.
+          </span>
+        }
+      </div>
     </div>
 
-    <div>
-      <label for="stock">
-        Saldo
-      </label>
+    <footer class="product-form__footer">
+      <a
+        class="secondary-button"
+        routerLink="/products"
+      >
+        Cancelar
+      </a>
 
-      <input
-        id="stock"
-        type="number"
-        formControlName="stock"
-        min="0"
-      />
+      <button
+        class="primary-button"
+        type="submit"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          <span
+            class="button-spinner"
+            aria-hidden="true"
+          ></span>
 
-      @if (
-        form.controls.stock.touched &&
-        form.controls.stock.hasError('min')
-      ) {
-        <span>
-          O saldo não pode ser negativo.
-        </span>
-      }
-    </div>
-
-    @if (errorMessage()) {
-      <p>
-        {{ errorMessage() }}
-      </p>
-    }
-
-    <button
-      type="submit"
-      [disabled]="isSubmitting()"
-    >
-      @if (isSubmitting()) {
-        Cadastrando...
-      } @else {
-        Cadastrar produto
-      }
-    </button>
+          Cadastrando...
+        } @else {
+          Cadastrar produto
+        }
+      </button>
+    </footer>
   </form>
 </section>

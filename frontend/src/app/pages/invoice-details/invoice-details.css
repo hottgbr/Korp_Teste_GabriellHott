@@ -3,21 +3,21 @@
 
   margin: 0 auto;
 
-  padding: 32px 0 64px;
+  padding: var(--space-8) 0 64px;
 }
 
 /* Toolbar */
 
 .page-toolbar {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 
-  color: #475569;
+  color: var(--color-text-secondary);
 
   font-size: 13px;
   font-weight: 600;
@@ -26,23 +26,23 @@
 }
 
 .back-link:hover {
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 /* Header */
 
 .invoice-header {
-  margin-top: 24px;
-  margin-bottom: 32px;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
 .invoice-header__eyebrow,
 .section-label {
   display: block;
 
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 
-  color: #2563eb;
+  color: var(--color-primary);
 
   font-size: 12px;
   font-weight: 700;
@@ -54,15 +54,15 @@
 .invoice-header__title-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 }
 
 .invoice-header h1 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text-primary);
 
   font-size: 30px;
   line-height: 1.2;
@@ -74,39 +74,40 @@
 
   margin: 0;
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 14px;
   line-height: 1.6;
 }
 
-/* Main layout */
+/* Layout */
 
 .invoice-layout {
   display: grid;
+
   grid-template-columns:
     minmax(0, 1fr)
     320px;
 
   align-items: start;
-  gap: 24px;
+
+  gap: var(--space-6);
 }
 
 .invoice-document {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-6);
 }
 
-/* Document cards */
+/* Document */
 
 .document-section,
-.action-card,
-.state-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+.action-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
 
-  background-color: #ffffff;
+  background-color: var(--color-surface);
 
   box-shadow:
     0 1px 2px rgb(15 23 42 / 4%);
@@ -120,21 +121,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
 
-  padding: 20px 24px;
+  padding:
+    var(--space-5)
+    var(--space-6);
 
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .document-section__header .section-label {
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 }
 
 .document-section__header h2 {
   margin: 0;
 
-  color: #0f172a;
+  color: var(--color-text-primary);
 
   font-size: 16px;
   font-weight: 650;
@@ -144,12 +147,13 @@
 
 .invoice-summary {
   display: grid;
+
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 24px;
+  gap: var(--space-6);
 
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .summary-item {
@@ -159,32 +163,26 @@
 }
 
 .summary-item > span {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 12px;
   font-weight: 500;
 }
 
 .summary-item > strong {
-  color: #0f172a;
+  color: var(--color-text-primary);
 
   font-size: 14px;
   font-weight: 600;
 }
 
-/* Items table */
+/* Items */
 
 .item-count {
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 12px;
   font-weight: 500;
-}
-
-.table-wrapper {
-  width: 100%;
-
-  overflow-x: auto;
 }
 
 .items-table {
@@ -194,11 +192,10 @@
 }
 
 .items-table th {
-  padding: 11px 24px;
+  padding: 11px var(--space-6);
 
-  background-color: #f8fafc;
-
-  color: #64748b;
+  background-color: var(--color-background);
+  color: var(--color-text-muted);
 
   font-size: 12px;
   font-weight: 600;
@@ -208,9 +205,11 @@
 }
 
 .items-table td {
-  padding: 16px 24px;
+  padding:
+    var(--space-4)
+    var(--space-6);
 
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-border-light);
 
   color: #334155;
 
@@ -220,18 +219,18 @@
 .product-cell {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .product-cell strong {
-  color: #0f172a;
+  color: var(--color-text-primary);
 
   font-size: 14px;
   font-weight: 600;
 }
 
 .product-cell span {
-  color: #94a3b8;
+  color: var(--color-text-subtle);
 
   font-size: 12px;
 }
@@ -245,10 +244,9 @@
 
   padding: 5px 9px;
 
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background-color: #f1f5f9;
-
   color: #334155;
 
   font-size: 12px;
@@ -256,9 +254,11 @@
 }
 
 .empty-items {
-  padding: 32px 24px;
+  padding:
+    var(--space-8)
+    var(--space-6);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 14px;
 }
@@ -272,88 +272,55 @@
 }
 
 .action-card {
-  padding: 24px;
+  padding: var(--space-6);
 }
 
 .action-card h2 {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 
-  color: #0f172a;
+  color: var(--color-text-primary);
 
   font-size: 17px;
   line-height: 1.35;
 }
 
 .action-card > p {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 
-  color: #64748b;
+  color: var(--color-text-muted);
 
   font-size: 13px;
   line-height: 1.6;
 }
 
-.primary-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
+.invoice-action-button {
   width: 100%;
-  min-height: 44px;
-
-  padding: 10px 16px;
-
-  border: 0;
-  border-radius: 8px;
-
-  background-color: #2563eb;
-
-  color: #ffffff;
-
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    background-color 150ms ease,
-    opacity 150ms ease;
-}
-
-.primary-action:hover:not(:disabled) {
-  background-color: #1d4ed8;
-}
-
-.primary-action:disabled {
-  opacity: 0.65;
-
-  cursor: not-allowed;
 }
 
 .action-hint {
   display: block;
 
-  margin-top: 12px;
+  margin-top: var(--space-3);
 
-  color: #94a3b8;
+  color: var(--color-text-subtle);
 
   font-size: 11px;
   line-height: 1.5;
 }
 
-/* Closed state */
+/* Closed */
 
 .closed-state {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
 
-  padding: 16px;
+  margin-bottom: var(--space-4);
+
+  padding: var(--space-4);
 
   border: 1px solid #bbf7d0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 
   background-color: #f0fdf4;
 }
@@ -371,7 +338,6 @@
   border-radius: 50%;
 
   background-color: #dcfce7;
-
   color: #15803d;
 
   font-size: 14px;
@@ -381,7 +347,7 @@
 .closed-state strong {
   display: block;
 
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 
   color: #166534;
 
@@ -397,62 +363,50 @@
   line-height: 1.5;
 }
 
-/* Loading */
+/* Button loading */
 
-.state-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  padding: 24px;
-}
-
-.state-card strong {
-  display: block;
-
-  margin-bottom: 4px;
-
-  color: #0f172a;
-
-  font-size: 14px;
-}
-
-.state-card p {
-  margin: 0;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-.loading-spinner,
 .button-spinner {
   flex-shrink: 0;
 
-  border-radius: 50%;
-
-  animation: spin 700ms linear infinite;
-}
-
-.loading-spinner {
-  width: 24px;
-  height: 24px;
-
-  border: 3px solid #dbeafe;
-  border-top-color: #2563eb;
-}
-
-.button-spinner {
   width: 16px;
   height: 16px;
 
   border: 2px solid rgb(255 255 255 / 40%);
   border-top-color: #ffffff;
+  border-radius: 50%;
+
+  animation: spin 700ms linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+/* Printing */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .invoice-details-page {
+    width: 100%;
+
+    padding: 0;
+  }
+
+  .invoice-layout {
+    display: block;
+  }
+
+  .invoice-document {
+    gap: 16px;
+  }
+
+  .document-section {
+    break-inside: avoid;
+
+    box-shadow: none;
+  }
+
+  body {
+    background-color: #ffffff;
   }
 }
 
@@ -472,11 +426,11 @@
   .invoice-details-page {
     width: min(100% - 24px, 1200px);
 
-    padding: 24px 0 48px;
+    padding: var(--space-6) 0 48px;
   }
 
   .invoice-header {
-    margin-bottom: 24px;
+    margin-bottom: var(--space-6);
   }
 
   .invoice-header__title-row {
@@ -491,9 +445,9 @@
   .invoice-summary {
     grid-template-columns: 1fr;
 
-    gap: 16px;
+    gap: var(--space-4);
 
-    padding: 20px;
+    padding: var(--space-5);
   }
 
   .document-section__header {
@@ -514,6 +468,6 @@
   }
 
   .action-card {
-    padding: 20px;
+    padding: var(--space-5);
   }
 }
