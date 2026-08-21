@@ -1,0 +1,72 @@
+<section>
+  <header>
+    <div>
+      <h1>Notas fiscais</h1>
+      <p>Gerencie as notas fiscais emitidas.</p>
+    </div>
+
+    <a routerLink="/invoices/new">
+      Nova nota fiscal
+    </a>
+  </header>
+
+  @if (isLoading()) {
+    <p>Carregando notas fiscais...</p>
+  }
+
+  @if (errorMessage()) {
+    <p>
+      {{ errorMessage() }}
+    </p>
+  }
+
+  @if (!isLoading() && !errorMessage()) {
+    @if (invoices().length > 0) {
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Status</th>
+            <th>Data</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (invoice of invoices(); track invoice.id) {
+            <tr>
+              <td>
+                {{ invoice.number }}
+              </td>
+
+              <td>
+                @if (invoice.status === 'OPEN') {
+                  Aberta
+                } @else {
+                  Fechada
+                }
+              </td>
+
+              <td>
+                {{ invoice.createdAt }}
+              </td>
+
+              <td>
+                <a
+                  [routerLink]="[
+                    '/invoices',
+                    invoice.id
+                  ]"
+                >
+                  Ver detalhes
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>Nenhuma nota fiscal encontrada.</p>
+    }
+  }
+</section>
