@@ -1,20 +1,28 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { StatusBadge } from '../../components/status-badge/status-badge';
 import { Invoice } from '../../models/invoice';
 import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
   selector: 'app-invoices',
-  imports: [RouterLink],
+  imports: [
+    RouterLink,
+    DatePipe,
+    StatusBadge,
+  ],
   templateUrl: './invoices.html',
   styleUrl: './invoices.css',
 })
 export class Invoices implements OnInit {
-  private readonly invoiceService = inject(InvoiceService);
+  private readonly invoiceService =
+    inject(InvoiceService);
 
   invoices = signal<Invoice[]>([]);
+
   isLoading = signal(false);
   errorMessage = signal('');
 

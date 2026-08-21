@@ -1,72 +1,176 @@
-<section>
-  <header>
+<section class="invoices-page">
+  <header class="page-header">
     <div>
+      <span class="page-header__eyebrow">
+        Faturamento
+      </span>
+
       <h1>Notas fiscais</h1>
-      <p>Gerencie as notas fiscais emitidas.</p>
+
+      <p>
+        Acompanhe as notas fiscais emitidas,
+        seus itens e o status de processamento.
+      </p>
     </div>
 
-    <a routerLink="/invoices/new">
+    <a
+      class="primary-button"
+      routerLink="/invoices/new"
+    >
+      <span class="primary-button__icon">
+        +
+      </span>
+
       Nova nota fiscal
     </a>
   </header>
 
   @if (isLoading()) {
-    <p>Carregando notas fiscais...</p>
+    <div class="state-card">
+      <div class="loading-spinner"></div>
+
+      <div>
+        <strong>
+          Carregando notas fiscais
+        </strong>
+
+        <p>
+          Aguarde enquanto buscamos os dados
+          de faturamento.
+        </p>
+      </div>
+    </div>
   }
 
   @if (errorMessage()) {
-    <p>
-      {{ errorMessage() }}
-    </p>
+    <div class="state-card state-card--error">
+      <div>
+        <strong>
+          Não foi possível carregar as notas fiscais
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+      </div>
+
+      <button
+        class="secondary-button"
+        type="button"
+        (click)="loadInvoices()"
+      >
+        Tentar novamente
+      </button>
+    </div>
   }
 
   @if (!isLoading() && !errorMessage()) {
-    @if (invoices().length > 0) {
-      <table>
-        <thead>
-          <tr>
-            <th>Número</th>
-            <th>Status</th>
-            <th>Data</th>
-            <th></th>
-          </tr>
-        </thead>
+    <div class="table-card">
+      <div class="table-card__header">
+        <div>
+          <h2>
+            Notas emitidas
+          </h2>
 
-        <tbody>
-          @for (invoice of invoices(); track invoice.id) {
-            <tr>
-              <td>
-                {{ invoice.number }}
-              </td>
+          <p>
+            {{ invoices().length }}
+            nota(s) encontrada(s)
+          </p>
+        </div>
+      </div>
 
-              <td>
-                @if (invoice.status === 'OPEN') {
-                  Aberta
-                } @else {
-                  Fechada
-                }
-              </td>
+      @if (invoices().length > 0) {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Número</th>
+                <th>Status</th>
+                <th>Data de emissão</th>
+                <th class="actions-column">
+                  Ações
+                </th>
+              </tr>
+            </thead>
 
-              <td>
-                {{ invoice.createdAt }}
-              </td>
+            <tbody>
+              @for (
+                invoice of invoices();
+                track invoice.id
+              ) {
+                <tr>
+                  <td>
+                    <div class="invoice-number">
+                      <strong>
+                        NF-e
+                        {{ invoice.number }}
+                      </strong>
 
-              <td>
-                <a
-                  [routerLink]="[
-                    '/invoices',
-                    invoice.id
-                  ]"
-                >
-                  Ver detalhes
-                </a>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    } @else {
-      <p>Nenhuma nota fiscal encontrada.</p>
-    }
+                      <span>
+                        ID {{ invoice.id }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <app-status-badge
+                      [status]="invoice.status"
+                    />
+                  </td>
+
+                  <td>
+                    <span class="invoice-date">
+                      {{
+                        invoice.createdAt
+                          | date: 'dd/MM/yyyy HH:mm'
+                      }}
+                    </span>
+                  </td>
+
+                  <td class="actions-column">
+                    <a
+                      class="details-link"
+                      [routerLink]="[
+                        '/invoices',
+                        invoice.id
+                      ]"
+                    >
+                      Ver detalhes
+
+                      <span aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            NF
+          </div>
+
+          <h3>
+            Nenhuma nota fiscal emitida
+          </h3>
+
+          <p>
+            Crie sua primeira nota fiscal
+            adicionando produtos e suas
+            respectivas quantidades.
+          </p>
+
+          <a
+            class="primary-button"
+            routerLink="/invoices/new"
+          >
+            Emitir primeira nota
+          </a>
+        </div>
+      }
+    </div>
   }
 </section>

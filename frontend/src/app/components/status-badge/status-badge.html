@@ -1,0 +1,17 @@
+<span
+  class="status-badge"
+  [class.status-badge--open]="
+    status === invoiceStatus.Open
+  "
+  [class.status-badge--closed]="
+    status === invoiceStatus.Closed
+  "
+>
+  <span class="status-badge__dot"></span>
+
+  @if (status === invoiceStatus.Open) {
+    Aberta
+  } @else {
+    Fechada
+  }
+</span>

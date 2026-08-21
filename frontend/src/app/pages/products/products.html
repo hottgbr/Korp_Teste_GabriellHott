@@ -1,48 +1,148 @@
-<section>
-  <header>
+<section class="products-page">
+  <header class="page-header">
     <div>
+      <span class="page-header__eyebrow">
+        Estoque
+      </span>
+
       <h1>Produtos</h1>
-      <p>Gerencie os produtos disponíveis em estoque.</p>
+
+      <p>
+        Consulte os produtos cadastrados e acompanhe
+        os saldos disponíveis em estoque.
+      </p>
     </div>
 
-    <a routerLink="/products/new">
+    <a
+      class="primary-button"
+      routerLink="/products/new"
+    >
+      <span class="primary-button__icon">+</span>
       Novo produto
     </a>
   </header>
 
   @if (isLoading()) {
-    <p>Carregando produtos...</p>
+    <div class="state-card">
+      <div class="loading-spinner"></div>
+
+      <div>
+        <strong>Carregando produtos</strong>
+        <p>
+          Aguarde enquanto buscamos os dados do estoque.
+        </p>
+      </div>
+    </div>
   }
 
   @if (errorMessage()) {
-    <p>
-      {{ errorMessage() }}
-    </p>
+    <div class="state-card state-card--error">
+      <div>
+        <strong>Não foi possível carregar os produtos</strong>
+        <p>
+          {{ errorMessage() }}
+        </p>
+      </div>
+
+      <button
+        class="secondary-button"
+        type="button"
+        (click)="loadProducts()"
+      >
+        Tentar novamente
+      </button>
+    </div>
   }
 
   @if (!isLoading() && !errorMessage()) {
-    @if (products().length > 0) {
-      <table>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Descrição</th>
-            <th>Saldo</th>
-          </tr>
-        </thead>
+    <div class="table-card">
+      <div class="table-card__header">
+        <div>
+          <h2>Produtos cadastrados</h2>
 
-        <tbody>
-          @for (product of products(); track product.id) {
-            <tr>
-              <td>{{ product.code }}</td>
-              <td>{{ product.description }}</td>
-              <td>{{ product.stock }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    } @else {
-      <p>Nenhum produto cadastrado.</p>
-    }
+          <p>
+            {{ products().length }}
+            produto(s) encontrado(s)
+          </p>
+        </div>
+      </div>
+
+      @if (products().length > 0) {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Produto</th>
+                <th>Saldo disponível</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (
+                product of products();
+                track product.id
+              ) {
+                <tr>
+                  <td>
+                    <span class="product-code">
+                      {{ product.code }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="product-info">
+                      <strong>
+                        {{ product.description }}
+                      </strong>
+
+                      <span>
+                        ID {{ product.id }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span
+                      class="stock-badge"
+                      [class.stock-badge--empty]="
+                        product.stock === 0
+                      "
+                      [class.stock-badge--low]="
+                        product.stock > 0 &&
+                        product.stock <= 5
+                      "
+                    >
+                      {{ product.stock }}
+                      unidade(s)
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            +
+          </div>
+
+          <h3>Nenhum produto cadastrado</h3>
+
+          <p>
+            Cadastre seu primeiro produto para começar
+            a controlar o estoque e emitir notas fiscais.
+          </p>
+
+          <a
+            class="primary-button"
+            routerLink="/products/new"
+          >
+            Cadastrar produto
+          </a>
+        </div>
+      }
+    </div>
   }
 </section>
