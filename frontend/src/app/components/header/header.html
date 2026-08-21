@@ -1,0 +1,53 @@
+<header class="app-header">
+  <div class="app-header__container">
+    <a
+      class="app-header__brand"
+      routerLink="/products"
+      aria-label="Ir para página inicial"
+    >
+      <span class="app-header__brand-icon">
+        NF
+      </span>
+
+      <span class="app-header__brand-content">
+        <strong>NFe Manager</strong>
+        <small>Gestão fiscal</small>
+      </span>
+    </a>
+
+    <nav
+      class="app-header__nav"
+      aria-label="Navegação principal"
+    >
+      <a
+        class="app-header__nav-link"
+        routerLink="/products"
+        routerLinkActive="app-header__nav-link--active"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }"
+      >
+        Produtos
+      </a>
+
+      <a
+        class="app-header__nav-link"
+        routerLink="/invoices"
+        routerLinkActive="app-header__nav-link--active"
+        [routerLinkActiveOptions]="{
+          exact: false
+        }"
+      >
+        Notas fiscais
+      </a>
+    </nav>
+
+    <div class="app-header__environment">
+      <span class="app-header__environment-dot"></span>
+
+      <span>
+        Ambiente local
+      </span>
+    </div>
+  </div>
+</header>
