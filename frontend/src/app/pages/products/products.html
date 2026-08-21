@@ -1,0 +1,48 @@
+<section>
+  <header>
+    <div>
+      <h1>Produtos</h1>
+      <p>Gerencie os produtos disponíveis em estoque.</p>
+    </div>
+
+    <a routerLink="/products/new">
+      Novo produto
+    </a>
+  </header>
+
+  @if (isLoading) {
+    <p>Carregando produtos...</p>
+  }
+
+  @if (errorMessage) {
+    <p>
+      {{ errorMessage }}
+    </p>
+  }
+
+  @if (!isLoading && !errorMessage) {
+    @if (products.length > 0) {
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (product of products; track product.id) {
+            <tr>
+              <td>{{ product.code }}</td>
+              <td>{{ product.description }}</td>
+              <td>{{ product.stock }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>Nenhum produto cadastrado.</p>
+    }
+  }
+</section>
