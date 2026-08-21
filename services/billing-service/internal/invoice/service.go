@@ -91,20 +91,31 @@ func (s *Service) Close(
 		return nil, ErrInvoiceAlreadyClosed
 	}
 
-	for _, item := range invoice.Items {
-		err := s.stockClient.DecreaseStock(
-			ctx,
-			item.ProductID,
-			item.Quantity,
-		)
+	stockItems := make(
+		[]StockItem,
+		0,
+		len(invoice.Items),
+	)
 
-		if err != nil {
-			return nil, fmt.Errorf(
-				"%w: %v",
-				ErrStockUpdateFailed,
-				err,
-			)
-		}
+	for _, item := range invoice.Items {
+		stockItems = append(
+			stockItems,
+			StockItem{
+				ProductID: item.ProductID,
+				Quantity:  item.Quantity,
+			},
+		)
+	}
+
+	if err := s.stockClient.DecreaseStockBatch(
+		ctx,
+		stockItems,
+	); err != nil {
+		return nil, fmt.Errorf(
+			"%w: %v",
+			ErrStockUpdateFailed,
+			err,
+		)
 	}
 
 	closedInvoice, err := s.repository.Close(

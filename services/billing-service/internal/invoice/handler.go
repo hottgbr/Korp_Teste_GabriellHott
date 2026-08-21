@@ -176,35 +176,3 @@ func (h *Handler) Close(c *gin.Context) {
 		closedInvoice,
 	)
 }
-
-	if err != nil {
-		switch {
-		case errors.Is(err, ErrStockItemsRequired),
-			errors.Is(err, ErrInvalidProductID),
-			errors.Is(err, ErrInvalidQuantity):
-
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-
-		case errors.Is(err, ErrProductNotFound):
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": err.Error(),
-			})
-
-		case errors.Is(err, ErrInsufficientStock):
-			c.JSON(http.StatusConflict, gin.H{
-				"error": err.Error(),
-			})
-
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "failed to update product stocks",
-			})
-		}
-
-		return
-	}
-
-	c.JSON(http.StatusOK, products)
-}

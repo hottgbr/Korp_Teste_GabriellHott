@@ -6,7 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	
+
+	"github.com/hottgbr/Korp_Teste_GabriellHott/services/billing-service/internal/invoice"
 )
 
 type Client struct {
@@ -32,11 +33,27 @@ type decreaseStockBatchRequest struct {
 
 func (c *Client) DecreaseStockBatch(
 	ctx context.Context,
-	items []decreaseStockBatchItem,
+	items []invoice.StockItem,
 ) error {
+	requestItems := make(
+		[]decreaseStockBatchItem,
+		0,
+		len(items),
+	)
+
+	for _, item := range items {
+		requestItems = append(
+			requestItems,
+			decreaseStockBatchItem{
+				ProductID: item.ProductID,
+				Quantity:  item.Quantity,
+			},
+		)
+	}
+
 	body, err := json.Marshal(
 		decreaseStockBatchRequest{
-			Items: items,
+			Items: requestItems,
 		},
 	)
 	if err != nil {
