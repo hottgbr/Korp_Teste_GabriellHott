@@ -26,6 +26,14 @@
   --color-error-background: #fffafa;
   --color-error-border: #fecaca;
 
+  --color-invoice-open: #7c3aed;
+  --color-invoice-open-background: #f5f3ff;
+
+  --color-invoice-closed: #dc2626;
+  --color-invoice-closed-strong: #b91c1c;
+  --color-invoice-closed-background: #fef2f2;
+  --color-invoice-closed-border: #fecaca;
+
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -60,6 +68,7 @@
 
 html {
   min-width: 320px;
+
   background-color: var(--color-background);
 }
 
@@ -197,8 +206,13 @@ button {
     0 1px 3px rgb(15 23 42 / 8%);
 }
 
-.primary-button:hover {
+.primary-button:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .primary-button__icon {

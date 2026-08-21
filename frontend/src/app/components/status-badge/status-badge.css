@@ -21,13 +21,11 @@
 }
 
 .status-badge--open {
-  background-color: #eff6ff;
-
-  color: #2563eb;
+  background-color: var(--color-invoice-open-background);
+  color: var(--color-invoice-open);
 }
 
 .status-badge--closed {
-  background-color: #ecfdf5;
-
-  color: #047857;
+  background-color: var(--color-invoice-closed-background);
+  color: var(--color-invoice-closed);
 }
