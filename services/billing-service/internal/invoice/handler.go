@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type Handler struct {
@@ -57,5 +58,121 @@ func (h *Handler) Create(c *gin.Context) {
 	c.JSON(
 		http.StatusCreated,
 		createdInvoice,
+	)
+}
+func (h *Handler) List(c *gin.Context) {
+	invoices, err := h.service.List(
+		c.Request.Context(),
+	)
+
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"error": "failed to list invoices",
+			},
+		)
+		return
+	}
+
+	c.JSON(http.StatusOK, invoices)
+}
+
+func (h *Handler) FindByID(c *gin.Context) {
+	id, err := strconv.ParseInt(
+		c.Param("id"),
+		10,
+		64,
+	)
+
+	if err != nil || id <= 0 {
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": "invalid invoice id",
+			},
+		)
+		return
+	}
+
+	invoice, err := h.service.FindByID(
+		c.Request.Context(),
+		id,
+	)
+
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError,
+			gin.H{
+				"error": "failed to retrieve invoice",
+			},
+		)
+		return
+	}
+
+	c.JSON(http.StatusOK, invoice)
+}
+
+func (h *Handler) Close(c *gin.Context) {
+	id, err := strconv.ParseInt(
+		c.Param("id"),
+		10,
+		64,
+	)
+
+	if err != nil || id <= 0 {
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{
+				"error": "invalid invoice id",
+			},
+		)
+		return
+	}
+
+	closedInvoice, err := h.service.Close(
+		c.Request.Context(),
+		id,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(
+			err,
+			ErrInvoiceAlreadyClosed,
+		):
+			c.JSON(
+				http.StatusConflict,
+				gin.H{
+					"error": err.Error(),
+				},
+			)
+
+		case errors.Is(
+			err,
+			ErrStockUpdateFailed,
+		):
+			c.JSON(
+				http.StatusServiceUnavailable,
+				gin.H{
+					"error": "stock service unavailable or stock update failed",
+				},
+			)
+
+		default:
+			c.JSON(
+				http.StatusInternalServerError,
+				gin.H{
+					"error": "failed to close invoice",
+				},
+			)
+		}
+
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		closedInvoice,
 	)
 }
