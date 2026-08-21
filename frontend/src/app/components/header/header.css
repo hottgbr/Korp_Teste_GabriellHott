@@ -25,6 +25,7 @@
   gap: 12px;
 
   color: #ffffff;
+
   text-decoration: none;
 }
 
@@ -38,12 +39,12 @@
 
   border-radius: 10px;
 
-  background-color: #2563eb;
-
+  background-color: var(--color-primary);
   color: #ffffff;
 
   font-size: 13px;
   font-weight: 700;
+
   letter-spacing: -0.3px;
 }
 
@@ -69,7 +70,6 @@
 .app-header__nav {
   display: flex;
   align-self: stretch;
-
   gap: 4px;
 
   margin-left: 48px;
@@ -118,7 +118,7 @@
 
   border-radius: 3px 3px 0 0;
 
-  background-color: #3b82f6;
+  background-color: var(--color-primary);
 }
 
 .app-header__environment {

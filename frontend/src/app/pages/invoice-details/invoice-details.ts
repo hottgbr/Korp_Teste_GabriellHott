@@ -1,9 +1,12 @@
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { FeedbackMessage } from '../../components/feedback-message/feedback-message';
+import { StatusBadge } from '../../components/status-badge/status-badge';
+import { InvoiceStatus } from '../../enums/invoice-status';
 import { Invoice } from '../../models/invoice';
 import { InvoiceService } from '../../services/invoice.service';
 
@@ -11,7 +14,9 @@ import { InvoiceService } from '../../services/invoice.service';
   selector: 'app-invoice-details',
   imports: [
     RouterLink,
+    DatePipe,
     FeedbackMessage,
+    StatusBadge,
   ],
   templateUrl: './invoice-details.html',
   styleUrl: './invoice-details.css',
@@ -19,6 +24,8 @@ import { InvoiceService } from '../../services/invoice.service';
 export class InvoiceDetails implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly invoiceService = inject(InvoiceService);
+
+  readonly invoiceStatus = InvoiceStatus;
 
   invoice = signal<Invoice | null>(null);
 
@@ -80,7 +87,7 @@ export class InvoiceDetails implements OnInit {
 
     if (
       !currentInvoice ||
-      currentInvoice.status === 'CLOSED'
+      currentInvoice.status === InvoiceStatus.Closed
     ) {
       return;
     }
@@ -99,6 +106,7 @@ export class InvoiceDetails implements OnInit {
       .subscribe({
         next: (invoice: Invoice) => {
           this.invoice.set(invoice);
+
           this.successMessage.set(
             'Nota fiscal fechada com sucesso. O estoque foi atualizado.',
           );

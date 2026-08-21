@@ -1,16 +1,27 @@
-<section>
-  <header>
-    <div>
-      <h1>Detalhes da nota fiscal</h1>
-    </div>
-
-    <a routerLink="/invoices">
-      Voltar
+<section class="invoice-details-page">
+  <div class="page-toolbar">
+    <a
+      class="back-link"
+      routerLink="/invoices"
+    >
+      <span aria-hidden="true">←</span>
+      Voltar para notas fiscais
     </a>
-  </header>
+  </div>
 
   @if (isLoading()) {
-    <p>Carregando nota fiscal...</p>
+    <div class="state-card">
+      <div class="loading-spinner"></div>
+
+      <div>
+        <strong>Carregando nota fiscal</strong>
+
+        <p>
+          Aguarde enquanto buscamos os dados
+          da nota.
+        </p>
+      </div>
+    </div>
   }
 
   <app-feedback-message
@@ -24,65 +35,206 @@
   />
 
   @if (invoice(); as currentInvoice) {
-    <div>
-      <p>
-        <strong>Número:</strong>
-        {{ currentInvoice.number }}
-      </p>
+    <header class="invoice-header">
+      <div>
+        <span class="invoice-header__eyebrow">
+          Nota fiscal eletrônica
+        </span>
 
-      <p>
-        <strong>Status:</strong>
-        @if (currentInvoice.status === 'OPEN') {
-          Aberta
-        } @else {
-          Fechada
-        }
-      </p>
+        <div class="invoice-header__title-row">
+          <h1>
+            NF-e {{ currentInvoice.number }}
+          </h1>
 
-      <p>
-        <strong>Data:</strong>
-        {{ currentInvoice.createdAt }}
-      </p>
-    </div>
+          <app-status-badge
+            [status]="currentInvoice.status"
+          />
+        </div>
 
-    <h2>Itens</h2>
+        <p>
+          Consulte os dados da nota e realize
+          o fechamento para efetivar a baixa
+          dos produtos em estoque.
+        </p>
+      </div>
+    </header>
 
-    @if (currentInvoice.items?.length) {
-      <table>
-        <thead>
-          <tr>
-            <th>Produto</th>
-            <th>Quantidade</th>
-          </tr>
-        </thead>
+    <div class="invoice-layout">
+      <main class="invoice-document">
+        <section class="document-section">
+          <div class="document-section__header">
+            <div>
+              <span class="section-label">
+                Identificação
+              </span>
 
-        <tbody>
-          @for (item of currentInvoice.items; track item.id) {
-            <tr>
-              <td>{{ item.productId }}</td>
-              <td>{{ item.quantity }}</td>
-            </tr>
+              <h2>Dados da nota fiscal</h2>
+            </div>
+          </div>
+
+          <div class="invoice-summary">
+            <div class="summary-item">
+              <span>Número da NF-e</span>
+
+              <strong>
+                {{ currentInvoice.number }}
+              </strong>
+            </div>
+
+            <div class="summary-item">
+              <span>Identificador</span>
+
+              <strong>
+                #{{ currentInvoice.id }}
+              </strong>
+            </div>
+
+            <div class="summary-item">
+              <span>Data de emissão</span>
+
+              <strong>
+                {{
+                  currentInvoice.createdAt
+                    | date: 'dd/MM/yyyy HH:mm'
+                }}
+              </strong>
+            </div>
+
+            <div class="summary-item">
+              <span>Status</span>
+
+              <app-status-badge
+                [status]="currentInvoice.status"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="document-section">
+          <div class="document-section__header">
+            <div>
+              <span class="section-label">
+                Produtos
+              </span>
+
+              <h2>Itens da nota</h2>
+            </div>
+
+            @if (currentInvoice.items?.length) {
+              <span class="item-count">
+                {{ currentInvoice.items?.length }}
+                item(ns)
+              </span>
+            }
+          </div>
+
+          @if (currentInvoice.items?.length) {
+            <div class="table-wrapper">
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  @for (
+                    item of currentInvoice.items;
+                    track item.id
+                  ) {
+                    <tr>
+                      <td>
+                        <div class="product-cell">
+                          <strong>
+                            Produto {{ item.productId }}
+                          </strong>
+
+                          <span>
+                            ID do produto:
+                            {{ item.productId }}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <span class="quantity">
+                          {{ item.quantity }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty-items">
+              Nenhum item encontrado nesta nota.
+            </div>
           }
-        </tbody>
-      </table>
-    } @else {
-      <p>Nenhum item encontrado.</p>
-    }
+        </section>
+      </main>
 
-    @if (currentInvoice.status === 'OPEN') {
-      <button
-        type="button"
-        [disabled]="isClosing()"
-        (click)="closeInvoice()"
-      >
-        @if (isClosing()) {
-          Processando...
-        } @else {
-          Imprimir nota fiscal
-        }
-      </button>
-    } @else {
-      <p>Esta nota fiscal já foi fechada.</p>
-    }
+      <aside class="invoice-actions">
+        <div class="action-card">
+          <span class="section-label">
+            Processamento
+          </span>
+
+          @if (
+            currentInvoice.status ===
+            invoiceStatus.Open
+          ) {
+            <h2>Nota aguardando fechamento</h2>
+
+            <p>
+              Ao imprimir e fechar esta nota,
+              os produtos serão baixados do
+              estoque automaticamente.
+            </p>
+
+            <button
+              class="primary-action"
+              type="button"
+              [disabled]="isClosing()"
+              (click)="closeInvoice()"
+            >
+              @if (isClosing()) {
+                <span
+                  class="button-spinner"
+                  aria-hidden="true"
+                ></span>
+
+                Processando...
+              } @else {
+                Imprimir e fechar nota
+              }
+            </button>
+
+            <span class="action-hint">
+              Esta operação depende da
+              disponibilidade do serviço de estoque.
+            </span>
+          } @else {
+            <div class="closed-state">
+              <div class="closed-state__icon">
+                ✓
+              </div>
+
+              <div>
+                <strong>
+                  Nota fiscal fechada
+                </strong>
+
+                <p>
+                  O processamento foi concluído
+                  e o estoque já foi atualizado.
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      </aside>
+    </div>
   }
 </section>
