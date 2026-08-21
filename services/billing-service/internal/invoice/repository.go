@@ -226,3 +226,38 @@ func (r *Repository) FindByID(
 
 	return &invoice, nil
 }
+func (r *Repository) Close(
+	ctx context.Context,
+	id int64,
+) (*Invoice, error) {
+	var invoice Invoice
+
+	err := r.db.QueryRow(
+		ctx,
+		`
+			UPDATE invoices
+			SET
+				status = 'CLOSED',
+				updated_at = NOW()
+			WHERE id = $1
+			  AND status = 'OPEN'
+			RETURNING id, number, status, created_at, updated_at
+		`,
+		id,
+	).Scan(
+		&invoice.ID,
+		&invoice.Number,
+		&invoice.Status,
+		&invoice.CreatedAt,
+		&invoice.UpdatedAt,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf(
+			"failed to close invoice: %w",
+			err,
+		)
+	}
+
+	return &invoice, nil
+}

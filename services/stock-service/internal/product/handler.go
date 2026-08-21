@@ -146,3 +146,50 @@ func (h *Handler) DecreaseStock(c *gin.Context) {
 
 	c.JSON(http.StatusOK, product)
 }
+
+func (h *Handler) DecreaseStockBatch(c *gin.Context) {
+	var input DecreaseStockBatchInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
+		return
+	}
+
+	products, err := h.service.DecreaseStockBatch(
+		c.Request.Context(),
+		input,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrStockItemsRequired),
+			errors.Is(err, ErrInvalidProductID),
+			errors.Is(err, ErrInvalidQuantity):
+
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+		case errors.Is(err, ErrProductNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+
+		case errors.Is(err, ErrInsufficientStock):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": err.Error(),
+			})
+
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "failed to update product stocks",
+			})
+		}
+
+		return
+	}
+
+	c.JSON(http.StatusOK, products)
+}

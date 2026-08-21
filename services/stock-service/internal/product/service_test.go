@@ -183,3 +183,10 @@ func TestServiceCreateValidations(t *testing.T) {
 		})
 	}
 }
+
+func (f *fakeRepository) DecreaseStockBatch(
+	ctx context.Context,
+	items []DecreaseStockBatchItemInput,
+) ([]Product, error) {
+	return nil, nil
+}

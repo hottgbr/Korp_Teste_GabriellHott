@@ -18,10 +18,6 @@ func Load() Config {
 			"DATABASE_URL",
 			"postgres://korp_billing:korp_billing_password@localhost:5433/billing_db?sslmode=disable",
 		),
-		StockServiceURL: getEnv(
-			"STOCK_SERVICE_URL",
-			"http://localhost:8081",
-		),
 	}
 }
 

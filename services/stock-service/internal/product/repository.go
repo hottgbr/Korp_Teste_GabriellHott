@@ -188,3 +188,102 @@ func (r *Repository) DecreaseStock(
 
 	return &product, nil
 }
+
+func (r *Repository) DecreaseStockBatch(
+	ctx context.Context,
+	items []DecreaseStockBatchItemInput,
+) ([]Product, error) {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"failed to begin stock transaction: %w",
+			err,
+		)
+	}
+
+	defer tx.Rollback(ctx)
+
+	updatedProducts := make([]Product, 0, len(items))
+
+	for _, item := range items {
+		var product Product
+
+		err := tx.QueryRow(
+			ctx,
+			`
+				UPDATE products
+				SET
+					stock = stock - $1,
+					updated_at = NOW()
+				WHERE id = $2
+				  AND stock >= $1
+				RETURNING
+					id,
+					code,
+					description,
+					stock,
+					created_at,
+					updated_at
+			`,
+			item.Quantity,
+			item.ProductID,
+		).Scan(
+			&product.ID,
+			&product.Code,
+			&product.Description,
+			&product.Stock,
+			&product.CreatedAt,
+			&product.UpdatedAt,
+		)
+
+		if errors.Is(err, pgx.ErrNoRows) {
+			var exists bool
+
+			checkErr := tx.QueryRow(
+				ctx,
+				`
+					SELECT EXISTS(
+						SELECT 1
+						FROM products
+						WHERE id = $1
+					)
+				`,
+				item.ProductID,
+			).Scan(&exists)
+
+			if checkErr != nil {
+				return nil, fmt.Errorf(
+					"failed to verify product: %w",
+					checkErr,
+				)
+			}
+
+			if !exists {
+				return nil, ErrProductNotFound
+			}
+
+			return nil, ErrInsufficientStock
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf(
+				"failed to decrease product stock: %w",
+				err,
+			)
+		}
+
+		updatedProducts = append(
+			updatedProducts,
+			product,
+		)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return nil, fmt.Errorf(
+			"failed to commit stock transaction: %w",
+			err,
+		)
+	}
+
+	return updatedProducts, nil
+}

@@ -11,6 +11,8 @@ var (
 	ErrDescriptionRequired = errors.New("product description is required")
 	ErrInvalidStock        = errors.New("product stock cannot be negative")
 	ErrInvalidQuantity     = errors.New("quantity must be greater than zero")
+	ErrStockItemsRequired  = errors.New("at least one stock item is required")
+	ErrInvalidProductID    = errors.New("product id must be greater than zero")
 )
 
 type Service struct {
@@ -69,5 +71,29 @@ func (s *Service) DecreaseStock(
 		ctx,
 		id,
 		input.Quantity,
+	)
+}
+
+func (s *Service) DecreaseStockBatch(
+	ctx context.Context,
+	input DecreaseStockBatchInput,
+) ([]Product, error) {
+	if len(input.Items) == 0 {
+		return nil, ErrStockItemsRequired
+	}
+
+	for _, item := range input.Items {
+		if item.ProductID <= 0 {
+			return nil, ErrInvalidProductID
+		}
+
+		if item.Quantity <= 0 {
+			return nil, ErrInvalidQuantity
+		}
+	}
+
+	return s.repository.DecreaseStockBatch(
+		ctx,
+		input.Items,
 	)
 }

@@ -32,12 +32,22 @@ func main() {
 			"service": "stock-service",
 		})
 	})
+
 	products := router.Group("/products")
 	{
 		products.POST("", productHandler.Create)
 		products.GET("", productHandler.List)
 		products.GET("/:id", productHandler.FindByID)
-		products.PATCH("/:id/stock", productHandler.DecreaseStock)
+
+		products.PATCH(
+			"/:id/stock",
+			productHandler.DecreaseStock,
+		)
+
+		products.PATCH(
+			"/stock",
+			productHandler.DecreaseStockBatch,
+		)
 	}
 	log.Printf("stock service running on port %s", cfg.Port)
 

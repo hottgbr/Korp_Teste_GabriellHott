@@ -20,4 +20,9 @@ type ProductRepository interface {
 		id int64,
 		quantity int,
 	) (*Product, error)
+
+	DecreaseStockBatch(
+		ctx context.Context,
+		items []DecreaseStockBatchItemInput,
+	) ([]Product, error)
 }

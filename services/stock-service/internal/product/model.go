@@ -20,3 +20,12 @@ type CreateProductInput struct {
 type DecreaseStockInput struct {
 	Quantity int `json:"quantity"`
 }
+
+type DecreaseStockBatchItemInput struct {
+	ProductID int64 `json:"productId"`
+	Quantity  int   `json:"quantity"`
+}
+
+type DecreaseStockBatchInput struct {
+	Items []DecreaseStockBatchItemInput `json:"items"`
+}

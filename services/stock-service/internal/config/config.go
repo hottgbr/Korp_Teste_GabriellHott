@@ -6,8 +6,9 @@ import (
 )
 
 type Config struct {
-	Port        string
-	DatabaseURL string
+	Port            string
+	DatabaseURL     string
+	StockServiceURL string
 }
 
 func Load() Config {
@@ -16,6 +17,10 @@ func Load() Config {
 		DatabaseURL: getEnv(
 			"DATABASE_URL",
 			"postgres://korp_stock:korp_stock_password@localhost:5432/stock_db?sslmode=disable",
+		),
+		StockServiceURL: getEnv(
+			"STOCK_SERVICE_URL",
+			"http://localhost:8081",
 		),
 	}
 }

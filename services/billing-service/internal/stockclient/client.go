@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	
 )
 
 type Client struct {
@@ -20,18 +21,22 @@ func NewClient(baseURL string) *Client {
 	}
 }
 
-type decreaseStockRequest struct {
-	Quantity int `json:"quantity"`
+type decreaseStockBatchItem struct {
+	ProductID int64 `json:"productId"`
+	Quantity  int   `json:"quantity"`
 }
 
-func (c *Client) DecreaseStock(
+type decreaseStockBatchRequest struct {
+	Items []decreaseStockBatchItem `json:"items"`
+}
+
+func (c *Client) DecreaseStockBatch(
 	ctx context.Context,
-	productID int64,
-	quantity int,
+	items []decreaseStockBatchItem,
 ) error {
 	body, err := json.Marshal(
-		decreaseStockRequest{
-			Quantity: quantity,
+		decreaseStockBatchRequest{
+			Items: items,
 		},
 	)
 	if err != nil {
@@ -42,9 +47,8 @@ func (c *Client) DecreaseStock(
 	}
 
 	url := fmt.Sprintf(
-		"%s/products/%d/stock",
+		"%s/products/stock",
 		c.baseURL,
-		productID,
 	)
 
 	req, err := http.NewRequestWithContext(
