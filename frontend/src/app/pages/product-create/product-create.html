@@ -78,17 +78,17 @@
       }
     </div>
 
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <p>
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </p>
     }
 
     <button
       type="submit"
-      [disabled]="isSubmitting"
+      [disabled]="isSubmitting()"
     >
-      @if (isSubmitting) {
+      @if (isSubmitting()) {
         Cadastrando...
       } @else {
         Cadastrar produto

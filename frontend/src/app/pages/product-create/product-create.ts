@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
@@ -17,8 +18,8 @@ export class ProductCreate {
   private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
 
-  isSubmitting = false;
-  errorMessage = '';
+  isSubmitting = signal(false);
+  errorMessage = signal('');
 
   form = this.formBuilder.nonNullable.group({
     code: [
@@ -48,14 +49,14 @@ export class ProductCreate {
       return;
     }
 
-    this.isSubmitting = true;
-    this.errorMessage = '';
+    this.isSubmitting.set(true);
+    this.errorMessage.set('');
 
     this.productService
       .create(this.form.getRawValue())
       .pipe(
         finalize(() => {
-          this.isSubmitting = false;
+          this.isSubmitting.set(false);
         }),
       )
       .subscribe({
@@ -63,9 +64,24 @@ export class ProductCreate {
           this.router.navigate(['/products']);
         },
 
-        error: () => {
-          this.errorMessage =
-            'Não foi possível cadastrar o produto.';
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 409) {
+            this.errorMessage.set(
+              'Já existe um produto cadastrado com este código.',
+            );
+            return;
+          }
+
+          if (error.status === 0) {
+            this.errorMessage.set(
+              'Não foi possível conectar ao serviço de estoque.',
+            );
+            return;
+          }
+
+          this.errorMessage.set(
+            'Não foi possível cadastrar o produto. Tente novamente.',
+          );
         },
       });
   }

@@ -10,18 +10,18 @@
     </a>
   </header>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <p>Carregando produtos...</p>
   }
 
-  @if (errorMessage) {
+  @if (errorMessage()) {
     <p>
-      {{ errorMessage }}
+      {{ errorMessage() }}
     </p>
   }
 
-  @if (!isLoading && !errorMessage) {
-    @if (products.length > 0) {
+  @if (!isLoading() && !errorMessage()) {
+    @if (products().length > 0) {
       <table>
         <thead>
           <tr>
@@ -32,7 +32,7 @@
         </thead>
 
         <tbody>
-          @for (product of products; track product.id) {
+          @for (product of products(); track product.id) {
             <tr>
               <td>{{ product.code }}</td>
               <td>{{ product.description }}</td>
