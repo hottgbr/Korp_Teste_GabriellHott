@@ -16,3 +16,7 @@ type CreateProductInput struct {
 	Description string `json:"description"`
 	Stock       int    `json:"stock"`
 }
+
+type DecreaseStockInput struct {
+	Quantity int `json:"quantity"`
+}

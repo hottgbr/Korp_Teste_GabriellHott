@@ -10,6 +10,7 @@ var (
 	ErrCodeRequired        = errors.New("product code is required")
 	ErrDescriptionRequired = errors.New("product description is required")
 	ErrInvalidStock        = errors.New("product stock cannot be negative")
+	ErrInvalidQuantity     = errors.New("quantity must be greater than zero")
 )
 
 type Service struct {
@@ -53,4 +54,20 @@ func (s *Service) FindByID(
 	id int64,
 ) (*Product, error) {
 	return s.repository.FindByID(ctx, id)
+}
+
+func (s *Service) DecreaseStock(
+	ctx context.Context,
+	id int64,
+	input DecreaseStockInput,
+) (*Product, error) {
+	if input.Quantity <= 0 {
+		return nil, ErrInvalidQuantity
+	}
+
+	return s.repository.DecreaseStock(
+		ctx,
+		id,
+		input.Quantity,
+	)
 }

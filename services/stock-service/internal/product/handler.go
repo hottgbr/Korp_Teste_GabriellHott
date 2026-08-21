@@ -93,3 +93,56 @@ func (h *Handler) FindByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, product)
 }
+
+func (h *Handler) DecreaseStock(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid product id",
+		})
+		return
+	}
+
+	var input DecreaseStockInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
+		return
+	}
+
+	product, err := h.service.DecreaseStock(
+		c.Request.Context(),
+		id,
+		input,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrInvalidQuantity):
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+
+		case errors.Is(err, ErrProductNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": err.Error(),
+			})
+
+		case errors.Is(err, ErrInsufficientStock):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": err.Error(),
+			})
+
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "failed to update product stock",
+			})
+		}
+
+		return
+	}
+
+	c.JSON(http.StatusOK, product)
+}

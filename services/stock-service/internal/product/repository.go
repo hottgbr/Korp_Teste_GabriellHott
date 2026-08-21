@@ -13,6 +13,7 @@ import (
 var (
 	ErrProductNotFound   = errors.New("product not found")
 	ErrProductCodeExists = errors.New("product code already exists")
+	ErrInsufficientStock = errors.New("insufficient product stock")
 )
 
 type Repository struct {
@@ -128,6 +129,61 @@ func (r *Repository) FindByID(
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to find product: %w", err)
+	}
+
+	return &product, nil
+}
+
+func (r *Repository) DecreaseStock(
+	ctx context.Context,
+	id int64,
+	quantity int,
+) (*Product, error) {
+	query := `
+		UPDATE products
+		SET
+			stock = stock - $1,
+			updated_at = NOW()
+		WHERE id = $2
+		  AND stock >= $1
+		RETURNING id, code, description, stock, created_at, updated_at
+	`
+
+	var product Product
+
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		quantity,
+		id,
+	).Scan(
+		&product.ID,
+		&product.Code,
+		&product.Description,
+		&product.Stock,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		_, findErr := r.FindByID(ctx, id)
+
+		if errors.Is(findErr, ErrProductNotFound) {
+			return nil, ErrProductNotFound
+		}
+
+		if findErr != nil {
+			return nil, fmt.Errorf(
+				"failed to verify product after stock update: %w",
+				findErr,
+			)
+		}
+
+		return nil, ErrInsufficientStock
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to decrease product stock: %w", err)
 	}
 
 	return &product, nil

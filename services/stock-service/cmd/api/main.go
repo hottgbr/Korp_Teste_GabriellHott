@@ -37,6 +37,7 @@ func main() {
 		products.POST("", productHandler.Create)
 		products.GET("", productHandler.List)
 		products.GET("/:id", productHandler.FindByID)
+		products.PATCH("/:id/stock", productHandler.DecreaseStock)
 	}
 	log.Printf("stock service running on port %s", cfg.Port)
 
