@@ -1,0 +1,173 @@
+<section class="invoice-create">
+  <header class="invoice-create__header">
+    <div>
+      <h1>Nova nota fiscal</h1>
+      <p>
+        Selecione os produtos e informe as quantidades da nota.
+      </p>
+    </div>
+
+    <a
+      class="invoice-create__back-link"
+      routerLink="/invoices"
+    >
+      Voltar
+    </a>
+  </header>
+
+  @if (isLoadingProducts()) {
+    <p class="invoice-create__loading">
+      Carregando produtos...
+    </p>
+  }
+
+  @if (
+    !isLoadingProducts() &&
+    availableProducts().length === 0
+  ) {
+    <app-feedback-message
+      message="Não há produtos com saldo disponível para lançar na nota fiscal."
+      type="info"
+    />
+  }
+
+  @if (errorMessage()) {
+    <app-feedback-message
+      [message]="errorMessage()"
+      type="error"
+    />
+  }
+
+  @if (
+    !isLoadingProducts() &&
+    availableProducts().length > 0
+  ) {
+    <form
+      class="invoice-create__form"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+    >
+      <div
+        class="invoice-create__items"
+        formArrayName="items"
+      >
+        @for (
+          item of items.controls;
+          track $index;
+          let index = $index
+        ) {
+          <div
+            class="invoice-item"
+            [formGroupName]="index"
+          >
+            <div class="invoice-item__field invoice-item__product">
+              <label
+                [for]="'product-' + index"
+              >
+                Produto
+              </label>
+
+              <select
+                [id]="'product-' + index"
+                formControlName="productId"
+              >
+                <option [ngValue]="0">
+                  Selecione um produto
+                </option>
+
+                @for (
+                  product of availableProducts();
+                  track product.id
+                ) {
+                  <option
+                    [ngValue]="product.id"
+                  >
+                    {{ product.code }} -
+                    {{ product.description }}
+                    (Saldo: {{ product.stock }})
+                  </option>
+                }
+              </select>
+
+              @if (
+                item.get('productId')?.touched &&
+                item.get('productId')?.invalid
+              ) {
+                <span class="invoice-item__error">
+                  Selecione um produto.
+                </span>
+              }
+            </div>
+
+            <div class="invoice-item__field invoice-item__quantity">
+              <label
+                [for]="'quantity-' + index"
+              >
+                Quantidade
+              </label>
+
+              <input
+                [id]="'quantity-' + index"
+                type="number"
+                min="1"
+                formControlName="quantity"
+              />
+
+              @if (
+                item.get('quantity')?.touched &&
+                item.get('quantity')?.invalid
+              ) {
+                <span class="invoice-item__error">
+                  A quantidade deve ser maior que zero.
+                </span>
+              }
+            </div>
+
+            <div class="invoice-item__actions">
+              @if (items.length > 1) {
+                <button
+                  class="invoice-item__remove-button"
+                  type="button"
+                  (click)="removeItem(index)"
+                >
+                  Remover
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="invoice-create__secondary-actions">
+        <button
+          class="invoice-create__add-button"
+          type="button"
+          (click)="addItem()"
+        >
+          + Adicionar produto
+        </button>
+      </div>
+
+      <div class="invoice-create__footer">
+        <a
+          class="invoice-create__cancel-button"
+          routerLink="/invoices"
+        >
+          Cancelar
+        </a>
+
+        <button
+          class="invoice-create__submit-button"
+          type="submit"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            Criando nota...
+          } @else {
+            Criar nota fiscal
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

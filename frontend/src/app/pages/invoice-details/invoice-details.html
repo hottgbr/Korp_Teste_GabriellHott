@@ -1,0 +1,88 @@
+<section>
+  <header>
+    <div>
+      <h1>Detalhes da nota fiscal</h1>
+    </div>
+
+    <a routerLink="/invoices">
+      Voltar
+    </a>
+  </header>
+
+  @if (isLoading()) {
+    <p>Carregando nota fiscal...</p>
+  }
+
+  <app-feedback-message
+    [message]="successMessage()"
+    type="success"
+  />
+
+  <app-feedback-message
+    [message]="errorMessage()"
+    type="error"
+  />
+
+  @if (invoice(); as currentInvoice) {
+    <div>
+      <p>
+        <strong>Número:</strong>
+        {{ currentInvoice.number }}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        @if (currentInvoice.status === 'OPEN') {
+          Aberta
+        } @else {
+          Fechada
+        }
+      </p>
+
+      <p>
+        <strong>Data:</strong>
+        {{ currentInvoice.createdAt }}
+      </p>
+    </div>
+
+    <h2>Itens</h2>
+
+    @if (currentInvoice.items?.length) {
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (item of currentInvoice.items; track item.id) {
+            <tr>
+              <td>{{ item.productId }}</td>
+              <td>{{ item.quantity }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>Nenhum item encontrado.</p>
+    }
+
+    @if (currentInvoice.status === 'OPEN') {
+      <button
+        type="button"
+        [disabled]="isClosing()"
+        (click)="closeInvoice()"
+      >
+        @if (isClosing()) {
+          Processando...
+        } @else {
+          Imprimir nota fiscal
+        }
+      </button>
+    } @else {
+      <p>Esta nota fiscal já foi fechada.</p>
+    }
+  }
+</section>
