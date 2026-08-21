@@ -8,6 +8,7 @@ import (
 
 	"github.com/hottgbr/Korp_Teste_GabriellHott/services/stock-service/internal/config"
 	"github.com/hottgbr/Korp_Teste_GabriellHott/services/stock-service/internal/database"
+	"github.com/hottgbr/Korp_Teste_GabriellHott/services/stock-service/internal/product"
 )
 
 func main() {
@@ -20,7 +21,9 @@ func main() {
 		log.Fatalf("could not start stock service: %v", err)
 	}
 	defer db.Close()
-
+	productRepository := product.NewRepository(db)
+	productService := product.NewService(productRepository)
+	productHandler := product.NewHandler(productService)
 	router := gin.Default()
 
 	router.GET("/health", func(c *gin.Context) {
@@ -29,7 +32,12 @@ func main() {
 			"service": "stock-service",
 		})
 	})
-
+	products := router.Group("/products")
+	{
+		products.POST("", productHandler.Create)
+		products.GET("", productHandler.List)
+		products.GET("/:id", productHandler.FindByID)
+	}
 	log.Printf("stock service running on port %s", cfg.Port)
 
 	if err := router.Run(cfg.Address()); err != nil {
