@@ -1,0 +1,98 @@
+<section>
+  <header>
+    <div>
+      <h1>Novo produto</h1>
+      <p>Cadastre um novo produto no estoque.</p>
+    </div>
+
+    <a routerLink="/products">
+      Voltar
+    </a>
+  </header>
+
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+  >
+    <div>
+      <label for="code">
+        Código
+      </label>
+
+      <input
+        id="code"
+        type="text"
+        formControlName="code"
+      />
+
+      @if (
+        form.controls.code.touched &&
+        form.controls.code.hasError('required')
+      ) {
+        <span>
+          O código é obrigatório.
+        </span>
+      }
+    </div>
+
+    <div>
+      <label for="description">
+        Descrição
+      </label>
+
+      <input
+        id="description"
+        type="text"
+        formControlName="description"
+      />
+
+      @if (
+        form.controls.description.touched &&
+        form.controls.description.hasError('required')
+      ) {
+        <span>
+          A descrição é obrigatória.
+        </span>
+      }
+    </div>
+
+    <div>
+      <label for="stock">
+        Saldo
+      </label>
+
+      <input
+        id="stock"
+        type="number"
+        formControlName="stock"
+        min="0"
+      />
+
+      @if (
+        form.controls.stock.touched &&
+        form.controls.stock.hasError('min')
+      ) {
+        <span>
+          O saldo não pode ser negativo.
+        </span>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p>
+        {{ errorMessage }}
+      </p>
+    }
+
+    <button
+      type="submit"
+      [disabled]="isSubmitting"
+    >
+      @if (isSubmitting) {
+        Cadastrando...
+      } @else {
+        Cadastrar produto
+      }
+    </button>
+  </form>
+</section>
